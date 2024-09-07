@@ -13,13 +13,21 @@ collection based on the OpenAPI definitions. Care about your OpenApi before usin
 - Logs validation results in the console for easy debugging.
 - Generates a new Postman collection with added schema validation for 20X status codes.
 - Uses AJV to validate responses.
-- Doesn't change your previus tests, but add new.
+- Doesn't change your previous tests, but add new.
 - Automaticly can add checks for status code based on provided OpenApi(Swagger).
 
 ## Requirements
 
 - Node.js (version 14.x or later)
 - NPM (version 6.x or later)
+
+
+## Advantages of using for QA
+
+1) Don't need to worry about schema validation actuality, so API contracts always have actual state.
+2) Don't need to focus on creating schema validation manually in Postman.
+3) Can be injected in CI/CD before running tests, so QA engineer may only focus on business logic and data states while creating automation tests.
+4) Has OpenApi, JSON and YAML validations under the hood.
 
 ## Installation
 
