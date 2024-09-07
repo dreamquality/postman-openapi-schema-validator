@@ -1,18 +1,17 @@
-```sh {"id":"01J73FT4D7JV942WRGYB4AKRH6"}
 # OpenAPI to Postman Schema Validator
 
 This project provides a Node.js script to automate the process of validating 
 Postman request responses against OpenAPI (Swagger) schemas. 
 It reads OpenAPI specifications (in JSON or YAML format) and Postman collections 
 (in JSON format), and then inserts schema validation scripts into the Postman 
-collection based on the OpenAPI definitions.
+collection based on the OpenAPI definitions. Care about your OpenApi before using, empty schemas won't be added. 
 
 ## Features
 
 - Supports OpenAPI versions 2.0, 3.0.0, 3.0.1, and higher.
 - Automatically adds schema validation scripts to Postman requests.
 - Logs validation results in the console for easy debugging.
-- Generates a new Postman collection with added schema validation.
+- Generates a new Postman collection with added schema validation for 20X status codes.
 - Uses AJV to validate responses.
 - Doesn't change your previus tests, but add new.
 - Automaticly can add checks for status code based on provided OpenApi(Swagger).
@@ -26,17 +25,19 @@ collection based on the OpenAPI definitions.
 
 1. Clone the repository:
 
-    git clone https://github.com/dreamquality/postman-openapi-schema-validator.git
-
+```sh {"id":"01J75WMES2FTASDYD81PECZZZR"}
+git clone https://github.com/dreamquality/postman-openapi-schema-validator.git
+```
 
 2. Install the required dependencies:
 
-    npm install
+```sh {"id":"01J73FT4D7JV942WRGYB4AKRH6"}
+npm install
+```
 
 ## Usage
 
 To run the script, use the following command:
-```
 
 ```sh {"id":"01J740AAFK13C68VQ1BSH467X6"}
 npm run transform -- --collection path/to/postman_collection.json --spec path/to/openapi_spec.yaml
@@ -52,7 +53,6 @@ npm run transform -- --collection path/to/postman_collection.json --spec path/to
 ## Console report
 
 ![console](https://github.com/dreamquality/postman-openapi-schema-validator/blob/main/images/console.png)
-
 
 ## Postman update in post response script with AJV
 
