@@ -87,18 +87,26 @@ const getSchemaForOpenAPI2 = (responses) => {
 const addSchemaValidationTest = (item, responseSchema) => {
     const validationScript = `
         const Ajv = require('ajv');
-        const ajv = new Ajv();
-        const schema = ${JSON.stringify(responseSchema)};
-        const validate = ajv.compile(schema);
-        const valid = validate(pm.response.json());
+        const ajv = new Ajv({ allErrors: true });
 
-        pm.test("Response schema is valid", function() {
-            pm.expect(valid).to.be.true;
+        // Register custom format 'int32'
+        ajv.addFormat('int32', {
+            type: 'number',
+            validate: (x) => Number.isInteger(x) && x >= -(2**31) && x <= 2**31 - 1,
         });
 
-        if (!valid) {
-            console.log(validate.errors);
-        }
+        const schema = ${JSON.stringify(responseSchema)};
+        const validate = ajv.compile(schema);
+        const data = pm.response.json();
+        const valid = validate(data);
+
+        pm.test("Response schema is valid", function() {
+            if (!valid) {
+                // Log schema validation errors
+                console.log('Schema validation errors:', validate.errors);
+            }
+            pm.expect(valid, "Schema errors: " + JSON.stringify(validate.errors, null, 2)).to.be.true;
+        });
     `;
 
     item.event = item.event || [];
@@ -106,7 +114,7 @@ const addSchemaValidationTest = (item, responseSchema) => {
     // Check for existing tests
     const existingTest = item.event.find(e => e.listen === 'test');
     if (existingTest) {
-        // If tests already exist, simply add the new validation at the end
+        // If tests already exist, add the new validation at the end
         existingTest.script.exec.push(...validationScript.split('\n'));
     } else {
         // If no tests exist, create a new test with validation
