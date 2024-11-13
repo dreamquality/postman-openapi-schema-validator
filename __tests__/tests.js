@@ -4,7 +4,7 @@ const path = require('path');
 
 test('should display version', () => {
     const output = execSync('node transform.js --version').toString();
-    expect(output.trim()).toBe('postman-openapi-schema-validator version: 1.0.1');
+    expect(output.trim()).toBe('postman-openapi-schema-validator version: 1.0.2');
 });
 
 test('should display help', () => {
