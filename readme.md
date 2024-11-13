@@ -67,3 +67,8 @@ posv --collection path/to/postman_collection.json --spec path/to/openapi_spec.ya
 
 - Green Checkmark (✓): Schema found and successfully added to the Postman collection.
 - Red Cross (✗): Schema not found or error encountered. Details will be logged in the console.
+
+## Links
+
+- [GitHub Repository](https://github.com/dreamquality/postman-openapi-schema-validator)
+- [npm Package](https://www.npmjs.com/package/postman-openapi-schema-validator)
