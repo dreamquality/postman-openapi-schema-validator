@@ -23,7 +23,7 @@ Options:
 }
 
 if (args.includes('--version')) {
-    console.log('postman-openapi-schema-validator version: 1.0.1');
+    console.log('postman-openapi-schema-validator version: 1.0.2');
     process.exit(0);
 }
 
