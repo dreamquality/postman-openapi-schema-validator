@@ -7,6 +7,26 @@ const $RefParser = require('json-schema-ref-parser');  // To resolve $ref refere
 
 // Getting command line arguments
 const args = process.argv.slice(2);
+if (args.includes('--help')) {
+    console.log(`
+Usage:
+    posv --collection <path_to_collection> --spec <path_to_openapi_spec> [--status-code-check]
+
+Options:
+    --collection        Path to the Postman collection JSON file
+    --spec              Path to the OpenAPI specification file (JSON or YAML)
+    --status-code-check Add additional checks for status codes in the collection
+    --version           Show the utility version
+    --help              Display this help message
+    `);
+    process.exit(0);
+}
+
+if (args.includes('--version')) {
+    console.log('postman-openapi-schema-validator version: 1.0.1');
+    process.exit(0);
+}
+
 const collectionArgIndex = args.indexOf('--collection');
 const specArgIndex = args.indexOf('--spec');
 const statusCodeCheckFlag = args.includes('--status-code-check');  // Flag for adding status code tests
