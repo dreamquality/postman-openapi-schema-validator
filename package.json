@@ -8,6 +8,18 @@
     "validate-openapi": "node validateOpenAPI.js",
     "validate-postman-collection": "node validatePostmanCollection.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dreamquality/postman-openapi-schema-validator.git"
+  },
+  "keywords": [
+    "OpenAPI",
+    "Postman",
+    "schema",
+    "validator",
+    "API",
+    "testing"
+  ],
   "author": "Alex",
   "license": "ISC",
   "dependencies": {
