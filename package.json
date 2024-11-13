@@ -26,6 +26,10 @@
     "type": "git",
     "url": "https://github.com/dreamquality/postman-openapi-schema-validator.git"
   },
+  "bugs": {
+    "url": "https://github.com/dreamquality/postman-openapi-schema-validator/issues"
+  },
+  "homepage": "https://github.com/dreamquality/postman-openapi-schema-validator#readme",
   "keywords": [
     "OpenAPI",
     "Postman",
@@ -33,5 +37,5 @@
     "validator",
     "API",
     "testing"
-  ],
+  ]
 }
