@@ -8,6 +8,7 @@
   },
   "scripts": {
     "transform": "node transform.js",
+    "test": "jest",
     "validate-openapi": "node validateOpenAPI.js",
     "validate-postman-collection": "node validatePostmanCollection.js"
   },
@@ -37,5 +38,8 @@
     "validator",
     "API",
     "testing"
-  ]
+  ],
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
