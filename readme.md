@@ -1,7 +1,4 @@
 ![npm](https://img.shields.io/npm/v/postman-openapi-schema-validator?color=blue&label=npm&logo=npm)
-[npm package](https://www.npmjs.com/package/postman-openapi-schema-validator)
-[GitHub repository](https://github.com/dreamquality/postman-openapi-schema-validator)
-
 
 # OpenAPI to Postman Schema Validator
 
