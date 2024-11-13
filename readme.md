@@ -1,3 +1,5 @@
+![npm](https://img.shields.io/npm/v/postman-openapi-schema-validator?color=blue&label=npm&logo=npm)
+
 # OpenAPI to Postman Schema Validator
 
 This project provides a Node.js script to automate the process of validating 
