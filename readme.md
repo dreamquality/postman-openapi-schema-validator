@@ -1,12 +1,9 @@
 ![npm](https://img.shields.io/npm/v/postman-openapi-schema-validator?color=blue&label=npm&logo=npm)
 
+
 # OpenAPI to Postman Schema Validator
 
-This project provides a Node.js script to automate the process of validating 
-Postman request responses against OpenAPI (Swagger) schemas. 
-It reads OpenAPI specifications (in JSON or YAML format) and Postman collections 
-(in JSON format), and then inserts schema validation scripts into the Postman 
-collection based on the OpenAPI definitions. Care about your OpenApi before using, empty schemas won't be added. 
+This project provides a Node.js command-line utility for automating the validation of Postman request responses against OpenAPI (Swagger) schemas. The utility reads OpenAPI specifications (in JSON or YAML format) and Postman collections (in JSON format), then inserts schema validation scripts into the Postman collection based on OpenAPI definitions. Ensure that your OpenAPI specifications contain schemas, as empty schemas won't be added.
 
 ## Features
 
@@ -14,70 +11,60 @@ collection based on the OpenAPI definitions. Care about your OpenApi before usin
 - Automatically adds schema validation scripts to Postman requests.
 - Logs validation results in the console for easy debugging.
 - Generates a new Postman collection with added schema validation for 20X status codes.
-- Uses AJV to validate responses.
-- Doesn't change your previous tests, but add new.
-- Automaticly can add checks for status code based on provided OpenApi(Swagger).
+- Uses AJV for response validation.
+- Does not modify existing tests but adds new ones.
+- Automatically adds status code checks based on OpenAPI (Swagger).
 
 ## Requirements
 
 - Node.js (version 14.x or later)
 - NPM (version 6.x or later)
 
+## Benefits for QA
 
-## Advantages of using for QA
-
-1) Don't need to worry about schema validation actuality, so API contracts always have actual state.
-2) Don't need to focus on creating schema validation manually in Postman.
-3) Can be injected in CI/CD before running tests, so QA engineer may only focus on business logic and data states while creating automation tests.
-4) Has OpenApi, JSON and YAML validations under the hood.
+1) Maintains schema validation accuracy, ensuring that API contracts are always up to date.
+2) Eliminates the need for manual schema validation creation in Postman.
+3) Can be integrated into CI/CD before running tests, so QA engineers can focus on business logic and data states when creating automated tests.
+4) Supports OpenAPI, JSON, and YAML validation.
 
 ## Installation
 
-1. Clone the repository:
+Install the utility globally with npm:
 
-```sh {"id":"01J75WMES2FTASDYD81PECZZZR"}
-git clone https://github.com/dreamquality/postman-openapi-schema-validator.git
+```sh
+npm install -g postman-openapi-schema-validator
 ```
 
-2. Install the required dependencies:
-
-```sh {"id":"01J73FT4D7JV942WRGYB4AKRH6"}
-npm install
-```
+This makes the `posv` command available globally in the command line.
 
 ## Usage
 
-To run the script, use the following command:
+To run the utility for validating a Postman collection against an OpenAPI specification, use the following command:
 
-```sh {"id":"01J740AAFK13C68VQ1BSH467X6"}
-npm run transform -- --collection path/to/postman_collection.json --spec path/to/openapi_spec.yaml
+```sh
+posv --collection path/to/postman_collection.json --spec path/to/openapi_spec.yaml
 ```
 
-To run the script with additional checks for status code, use the next command:
+To run the utility with additional status code checks, use the following command:
 
-```sh {"id":"01J740CPH0ZGSHGQR03RAESSE7"}
-npm run transform -- --collection path/to/postman_collection.json --spec path/to/openapi_spec.yaml --status-code-check
-
+```sh
+posv --collection path/to/postman_collection.json --spec path/to/openapi_spec.yaml --status-code-check
 ```
 
-## Console report
+## Console Report
 
 ![console](https://github.com/dreamquality/postman-openapi-schema-validator/blob/main/images/console.png)
 
-## Postman update in post response script with AJV
+## Postman Validation with AJV
 
 ![ajv](https://github.com/dreamquality/postman-openapi-schema-validator/blob/main/images/ajv.png)
 
-Arguments
---collection <path_to_collection>: Path to the Postman collection JSON file.
---spec <path_to_openapi_spec>: Path to the OpenAPI specification file (JSON or YAML).
+## Arguments
 
-```sh {"id":"01J73FWJXCWD7HATF3RPKNT4CE"}
-node tranform.js -- --collection postman_collection.json --spec openapi.yaml
-```
+- `--collection <path_to_collection>`: Path to the Postman collection JSON file.
+- `--spec <path_to_openapi_spec>`: Path to the OpenAPI specification file (JSON or YAML).
 
-This command reads the postman_collection.json file and openapi.yaml file, then updates the Postman collection with schema validation scripts based on the OpenAPI specification.
+## Logging
 
-Logging
-Green Checkmark (✓): Schema found and successfully added to the Postman collection.
-Red Cross (✗): Schema not found or error encountered. Details will be logged in the console.
+- Green Checkmark (✓): Schema found and successfully added to the Postman collection.
+- Red Cross (✗): Schema not found or error encountered. Details will be logged in the console.
