@@ -1,6 +1,6 @@
 {
   "name": "postman-openapi-schema-validator",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A Node.js utility for validating and integrating OpenAPI schema validations into Postman collections. Supports OpenAPI versions 2.0, 3.0.x. Works as a CLI tool and a library.",
   "main": "src/index.js",
   "bin": {
@@ -8,8 +8,7 @@
   },
   "scripts": {
     "start": "node cli.js",
-    "test": "jest",
-    "transform": "node transform.js"
+    "test": "jest"
   },
   "author": "Alex",
   "license": "ISC",
