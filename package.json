@@ -9,8 +9,6 @@
   "scripts": {
     "start": "node cli.js",
     "test": "jest",
-    "lint": "eslint .",
-    "prepare": "npm run lint && npm test",
     "transform": "node transform.js"
   },
   "author": "Alex",
