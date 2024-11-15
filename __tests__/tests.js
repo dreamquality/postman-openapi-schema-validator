@@ -1,12 +1,12 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { validate } = require('./../src');
+const { validateCollection } = require('./../src');
 
 // CLI Tests
 describe('CLI Tests', () => {
-    const testDataPath = path.resolve(__dirname, 'data');
-    const outputFilePath = path.join(testDataPath, 'postman-collection_with_validation.json');
+    const testDataPath = path.resolve(__dirname, '../data');
+    const outputFilePath = path.join(testDataPath, '../postman-collection_with_validation.json');
 
     beforeAll(() => {
         // Удаляем выходной файл перед запуском тестов
@@ -16,36 +16,25 @@ describe('CLI Tests', () => {
     });
 
     test('should display version', () => {
-        const output = execSync('node cli.js --version').toString();
-        expect(output.trim()).toBe('postman-openapi-schema-validator version: 1.1.0');
+        const output = execSync('node src/index.js --version').toString();
+        expect(output.trim()).toBe('postman-openapi-schema-validator version: 1.1.1');
     });
 
     test('should display help', () => {
-        const output = execSync('node cli.js --help').toString();
+        const output = execSync('node src/index.js --help').toString();
         expect(output).toMatch(/Usage:/);
         expect(output).toMatch(/--collection/);
         expect(output).toMatch(/--spec/);
     });
 
     test('should fail if required arguments are missing', () => {
-        expect(() => execSync('node cli.js')).toThrow();
+        expect(() => execSync('node src/index.js')).toThrow();
     });
 
     test('should create a Postman collection with validation by provided OpenAPI', () => {
-        const testDataPath = path.resolve(__dirname, 'data'); // Убедитесь, что путь ведет к правильной папке
-        const outputFilePath = path.resolve(__dirname, '../postman-collection_with_validation.json');
-    
-        // Убедимся, что файл не существует перед тестом
-        if (fs.existsSync(outputFilePath)) {
-            fs.unlinkSync(outputFilePath);
-        }
-    
-        // Выполняем команду CLI
+
         execSync(
-            `node cli.js --collection ${path.join(
-                testDataPath,
-                'postman-collection.json'
-            )} --spec ${path.join(testDataPath, 'test-swagger.json')}`,
+            `node src/index.js --collection __tests__/data/postman-collection.json --spec __tests__/data/test-swagger.json`,
             { stdio: 'inherit' }
         );
     
@@ -65,7 +54,7 @@ describe('CLI Tests', () => {
     test('should fail validation with invalid OpenAPI spec', () => {
         expect(() =>
             execSync(
-                `node cli.js --collection ${path.join(
+                `node src/index.js --collection ${path.join(
                     testDataPath,
                     'postman-collection.json'
                 )} --spec ${path.join(testDataPath, 'invalid-swagger.json')}`,
@@ -75,15 +64,11 @@ describe('CLI Tests', () => {
     });
 });
 
-// Validate Function Tests
 describe('Validate Function Tests', () => {
     const testDataPath = path.resolve(__dirname, 'data');
-    const mockOptions = {
-        collectionPath: path.join(testDataPath, 'postman-collection.json'),
-        specPath: path.join(testDataPath, 'test-swagger.json'),
-        outputDir: testDataPath,
-        options: { statusCodeCheck: true },
-    };
+    const collectionPath = path.join(testDataPath, 'postman-collection.json');
+    const specPath = path.join(testDataPath, 'test-swagger.json');
+    const options = { statusCodeCheck: true };
 
     test('should validate Postman collection with OpenAPI and save output', async () => {
         const outputFilePath = path.join('postman-collection_with_validation.json');
@@ -93,8 +78,8 @@ describe('Validate Function Tests', () => {
             fs.unlinkSync(outputFilePath);
         }
     
-        // Выполняем функцию validate
-        const result = await validate(mockOptions);
+        // Выполняем функцию validateCollection
+        const result = await validateCollection(collectionPath, specPath, options);
     
         expect(result).toBe(outputFilePath); // Проверяем, что возвращённый путь совпадает с ожидаемым
         expect(fs.existsSync(result)).toBe(true); // Проверяем, что файл существует
@@ -107,6 +92,4 @@ describe('Validate Function Tests', () => {
         // Удаляем файл после теста
         fs.unlinkSync(outputFilePath);
     });
-    
-    
 });

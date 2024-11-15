@@ -4,10 +4,10 @@
   "description": "A Node.js utility for validating and integrating OpenAPI schema validations into Postman collections. Supports OpenAPI versions 2.0, 3.0.x. Works as a CLI tool and a library.",
   "main": "src/index.js",
   "bin": {
-    "posv": "./cli.js"
+    "posv": "src/index.js"
   },
   "scripts": {
-    "start": "node cli.js",
+    "start": "node src/index.js",
     "test": "jest"
   },
   "author": "Alex",

@@ -1,3 +1,4 @@
+
 ![npm](https://img.shields.io/npm/v/postman-openapi-schema-validator?color=blue&label=npm&logo=npm)  
 ![Integration Tests](https://github.com/dreamquality/postman-openapi-schema-validator/actions/workflows/test.yml/badge.svg)
 
@@ -44,7 +45,6 @@ Install the utility globally with npm:
 
 ```sh
 npm install -g postman-openapi-schema-validator
-
 ```
 
 This makes the `posv` command available globally in the terminal.
@@ -55,14 +55,12 @@ Install the utility locally in your project:
 
 ```sh
 npm install postman-openapi-schema-validator
-
 ```
 
 Import it into your code:
 
 ```javascript
-const { validate } = require('postman-openapi-schema-validator');
-
+const { validateCollection } = require('postman-openapi-schema-validator');
 ```
 
 ---
@@ -75,14 +73,12 @@ To validate a Postman collection against an OpenAPI specification, use the follo
 
 ```sh
 posv --collection path/to/postman_collection.json --spec path/to/openapi_spec.yaml
-
 ```
 
 To include additional status code validation:
 
 ```sh
 posv --collection path/to/postman_collection.json --spec path/to/openapi_spec.yaml --status-code-check
-
 ```
 
 ### Library
@@ -90,16 +86,19 @@ posv --collection path/to/postman_collection.json --spec path/to/openapi_spec.ya
 Use the utility in your code for greater flexibility:
 
 ```javascript
-const { validate } = require('postman-openapi-schema-validator');
+const { validateCollection } = require('postman-openapi-schema-validator');
 
-validate({
-    collectionPath: './path/to/postman_collection.json',
-    specPath: './path/to/openapi_spec.yaml',
-    options: { statusCodeCheck: true }
-})
-    .then((outputPath) => console.log(`Validation completed. Output saved to: ${outputPath}`))
-    .catch((error) => console.error(`Validation failed: ${error.message}`));
+const collectionPath = './path/to/postman_collection.json';
+const specPath = './path/to/openapi_spec.yaml';
+const options = { statusCodeCheck: true };
 
+validateCollection(collectionPath, specPath, options)
+    .then((outputPath) => {
+        console.log(`Validation completed. Output saved to: ${outputPath}`);
+    })
+    .catch((error) => {
+        console.error(`Validation failed: ${error.message}`);
+    });
 ```
 
 ---
@@ -108,7 +107,24 @@ validate({
 
 ### Example Output
 
-![console](https://github.com/dreamquality/postman-openapi-schema-validator/blob/main/images/console.png)
+The utility logs detailed results to the console. Here's an example output showing validation summaries:
+
+```plaintext
+OpenAPI version detected: 3.0.1
+✓ Schema validation test added for POST /pet
+✗ Schema not found for GET /unknown
+✓ Schema validation test added for DELETE /user/{id}
+
+--- Validation Summary ---
+┌─────────────────────┬────────┐
+│ Metric              │ Value  │
+├─────────────────────┼────────┤
+│ Total Requests      │ 10     │
+│ Validated Requests  │ 8      │
+│ Unvalidated Requests│ 2      │
+│ Schema Coverage (%) │ 80.00% │
+└─────────────────────┴────────┘
+```
 
 ### Example Postman Script with AJV Validation
 
@@ -118,18 +134,17 @@ validate({
 
 ## Arguments
 
-- **CLI Arguments**:
+### CLI Arguments:
 
-   - `--collection <path>`: Path to the Postman collection JSON file.
-   - `--spec <path>`: Path to the OpenAPI specification file (JSON or YAML).
-   - `--status-code-check`: Adds status code validation to Postman tests.
+- `--collection <path>`: Path to the Postman collection JSON file.
+- `--spec <path>`: Path to the OpenAPI specification file (JSON or YAML).
+- `--status-code-check`: Adds status code validation to Postman tests.
 
-- **Library Options**:
+### Library Options:
 
-   - `collectionPath`: Path to the Postman collection JSON file.
-   - `specPath`: Path to the OpenAPI specification file (JSON or YAML).
-   - `outputDir`: Directory where the updated collection will be saved.
-   - `options.statusCodeCheck`: Enables status code validation.
+- `collectionPath`: Path to the Postman collection JSON file.
+- `specPath`: Path to the OpenAPI specification file (JSON or YAML).
+- `options.statusCodeCheck`: Enables status code validation.
 
 ---
 
@@ -147,9 +162,9 @@ validate({
 
 ---
 
-### What's New in Version 1.1.0
+### What's New in Version 1.1.1
 
-- Added support for using the utility as a library.
-- Improved modularity and testability.
-- Updated CLI for easier usage.
-- Enhanced documentation and examples.
+- Added a percentage-based schema coverage report.
+- Enhanced CLI error handling and user feedback.
+- Improved library usage example with detailed options.
+- Bug fixes and performance optimizations.
