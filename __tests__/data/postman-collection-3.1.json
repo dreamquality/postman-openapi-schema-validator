@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "OpenAPI 3.1 Test Collection",
+    "description": "Test collection for OpenAPI 3.1 validation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Pets",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pets?limit=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["pets"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "10"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Pet",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Fluffy\",\n  \"tag\": \"cat\",\n  \"status\": \"available\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/pets",
+          "host": ["{{baseUrl}}"],
+          "path": ["pets"]
+        }
+      }
+    },
+    {
+      "name": "Get Pet by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pets/:petId",
+          "host": ["{{baseUrl}}"],
+          "path": ["pets", ":petId"]
+        }
+      }
+    }
+  ]
+}

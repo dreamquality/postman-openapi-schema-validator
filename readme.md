@@ -10,7 +10,7 @@ This project provides a Node.js utility for automating the validation of Postman
 
 ## Features
 
-- **Supports OpenAPI versions:** 2.0, 3.0.0, 3.0.1, and higher.
+- **Supports OpenAPI versions:** 2.0, 3.0.x, and 3.1.
 - **Automates schema validation:** Adds schema validation scripts to Postman requests.
 - **Debugging:** Logs validation results in the console.
 - **Improved Postman collections:** Generates new Postman collections with added schema validation for 20X status codes.
@@ -110,7 +110,7 @@ validateCollection(collectionPath, specPath, options)
 The utility logs detailed results to the console. Here's an example output showing validation summaries:
 
 ```plaintext
-OpenAPI version detected: 3.0.1
+OpenAPI version detected: 3.1.0
 ✓ Schema validation test added for POST /pet
 ✗ Schema not found for GET /unknown
 ✓ Schema validation test added for DELETE /user/{id}
