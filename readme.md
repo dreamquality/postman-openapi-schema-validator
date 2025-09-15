@@ -162,6 +162,43 @@ OpenAPI version detected: 3.1.0
 
 ---
 
+## Release Process
+
+This repository includes an automated release workflow that can be manually triggered to publish new versions to NPM.
+
+### For Maintainers
+
+To create a new release:
+
+1. **Go to GitHub Actions** in the repository
+2. **Select the "Release to NPM" workflow**
+3. **Click "Run workflow"** and choose:
+   - **Version bump type**: `patch` (1.1.1 → 1.1.2), `minor` (1.1.1 → 1.2.0), or `major` (1.1.1 → 2.0.0)
+   - **Dry run**: Check this to preview changes without actually publishing
+
+### What the workflow does:
+
+1. ✅ **Runs all tests** to ensure quality
+2. 🔢 **Bumps the version** in `package.json`
+3. 📝 **Generates a changelog** with recent commits
+4. 🏷️ **Creates a Git tag** for the release
+5. 📦 **Publishes to NPM** with the new version
+6. 🚀 **Creates a GitHub release** with release notes
+
+### Requirements:
+
+- `NPM_TOKEN` secret must be configured in the repository settings
+- Only maintainers with appropriate permissions can trigger releases
+
+### Dry Run Mode:
+
+Use dry run mode to preview what would happen without making actual changes:
+- Shows what the new version number would be
+- Generates changelog preview
+- No actual publishing or tagging occurs
+
+---
+
 ### What's New in Version 1.1.1
 
 - Added a percentage-based schema coverage report.
