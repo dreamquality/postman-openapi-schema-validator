@@ -1,0 +1,132 @@
+name: Release to NPM
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      dry_run:
+        description: 'Run in dry-run mode (skip actual NPM publish)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get current version
+        id: current_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        id: version_bump
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "🚧 DRY RUN MODE - No actual version bump"
+            NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version --dry-run | sed 's/^v//')
+          else
+            NEW_VERSION=$(npm version ${{ inputs.version_type }} --no-git-tag-version | sed 's/^v//')
+            git add package.json package-lock.json
+            git commit -m "chore: bump version to $NEW_VERSION"
+          fi
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          echo "## Release v${{ steps.version_bump.outputs.new_version }}" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### Changes since v${{ steps.current_version.outputs.version }}" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          git log v${{ steps.current_version.outputs.version }}..HEAD --pretty=format:"- %s (%h)" --no-merges >> CHANGELOG.md || echo "- Initial release" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### Features" >> CHANGELOG.md
+          echo "- ✅ OpenAPI 2.0 (Swagger) support" >> CHANGELOG.md
+          echo "- ✅ OpenAPI 3.0.x support" >> CHANGELOG.md
+          echo "- ✅ OpenAPI 3.1 support" >> CHANGELOG.md
+          echo "- 🛠️ CLI tool and library API" >> CHANGELOG.md
+          echo "- 📝 Comprehensive test coverage" >> CHANGELOG.md
+
+      - name: Create Git tag
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git tag -a "v${{ steps.version_bump.outputs.new_version }}" -m "Release v${{ steps.version_bump.outputs.new_version }}"
+
+      - name: Push changes and tag
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git push origin HEAD:${{ github.ref_name }}
+          git push origin "v${{ steps.version_bump.outputs.new_version }}"
+
+      - name: Publish to NPM
+        if: ${{ !inputs.dry_run }}
+        run: |
+          echo "📦 Publishing to NPM..."
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        if: ${{ !inputs.dry_run }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version_bump.outputs.new_version }}
+          release_name: Release v${{ steps.version_bump.outputs.new_version }}
+          body_path: CHANGELOG.md
+          draft: false
+          prerelease: false
+
+      - name: Dry run summary
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "🚧 DRY RUN COMPLETED"
+          echo "Would have:"
+          echo "- Bumped version from ${{ steps.current_version.outputs.version }} to ${{ steps.version_bump.outputs.new_version }}"
+          echo "- Created git tag v${{ steps.version_bump.outputs.new_version }}"
+          echo "- Published to NPM"
+          echo "- Created GitHub release"
+          echo ""
+          echo "Generated changelog:"
+          cat CHANGELOG.md
+
+      - name: Success summary
+        if: ${{ !inputs.dry_run }}
+        run: |
+          echo "🎉 RELEASE COMPLETED SUCCESSFULLY"
+          echo "✅ Version bumped to ${{ steps.version_bump.outputs.new_version }}"
+          echo "✅ Published to NPM: https://www.npmjs.com/package/postman-openapi-schema-validator"
+          echo "✅ GitHub release created: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version_bump.outputs.new_version }}"

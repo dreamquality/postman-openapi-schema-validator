@@ -62,6 +62,40 @@ describe('CLI Tests', () => {
             )
         ).toThrow();
     });
+
+    test('should create a Postman collection with validation using OpenAPI 3.1', () => {
+        const outputFilePath = path.join(testDataPath, '../postman-collection-3.1_with_validation.json');
+
+        // Clean up before test
+        if (fs.existsSync(outputFilePath)) {
+            fs.unlinkSync(outputFilePath);
+        }
+
+        execSync(
+            `node src/index.js --collection __tests__/data/postman-collection-3.1.json --spec __tests__/data/test-openapi-3.1.json`,
+            { stdio: 'inherit' }
+        );
+
+        // Check that the file was created
+        expect(fs.existsSync(outputFilePath)).toBe(true);
+
+        // Check contents of generated file
+        const generatedCollection = JSON.parse(fs.readFileSync(outputFilePath, 'utf8'));
+        expect(generatedCollection).toHaveProperty('item');
+        expect(generatedCollection.item).not.toHaveLength(0);
+
+        // Verify that validation tests were added
+        const hasValidationTests = generatedCollection.item.some(item => 
+            item.event && item.event.some(event => 
+                event.listen === 'test' && 
+                event.script.exec.some(line => line.includes('Schema validation'))
+            )
+        );
+        expect(hasValidationTests).toBe(true);
+
+        // Clean up after test
+        fs.unlinkSync(outputFilePath);
+    });
 });
 
 describe('Validate Function Tests', () => {
@@ -91,5 +125,99 @@ describe('Validate Function Tests', () => {
     
         // Удаляем файл после теста
         fs.unlinkSync(outputFilePath);
+    });
+});
+
+describe('OpenAPI 3.1 Support Tests', () => {
+    const testDataPath = path.resolve(__dirname, 'data');
+    const collection31Path = path.join(testDataPath, 'postman-collection-3.1.json');
+    const spec31Path = path.join(testDataPath, 'test-openapi-3.1.json');
+    const options = { statusCodeCheck: true };
+
+    test('should detect OpenAPI 3.1.0 version', async () => {
+        const outputFilePath = path.join('postman-collection-3.1_with_validation.json');
+        
+        // Clean up before test
+        if (fs.existsSync(outputFilePath)) {
+            fs.unlinkSync(outputFilePath);
+        }
+
+        // Capture console output to check version detection
+        const originalLog = console.log;
+        let logOutput = '';
+        console.log = (message) => {
+            logOutput += message + '\n';
+            originalLog(message);
+        };
+
+        try {
+            const result = await validateCollection(collection31Path, spec31Path, options);
+            
+            expect(logOutput).toContain('OpenAPI version detected: 3.1.0');
+            expect(result).toBe(outputFilePath);
+            expect(fs.existsSync(result)).toBe(true);
+
+            // Verify generated collection has validation tests
+            const generatedCollection = JSON.parse(fs.readFileSync(outputFilePath, 'utf8'));
+            expect(generatedCollection).toHaveProperty('item');
+            expect(generatedCollection.item).not.toHaveLength(0);
+
+            // Check that at least one item has validation tests
+            const hasValidationTests = generatedCollection.item.some(item => 
+                item.event && item.event.some(event => 
+                    event.listen === 'test' && 
+                    event.script.exec.some(line => line.includes('Schema validation'))
+                )
+            );
+            expect(hasValidationTests).toBe(true);
+
+        } finally {
+            console.log = originalLog;
+            if (fs.existsSync(outputFilePath)) {
+                fs.unlinkSync(outputFilePath);
+            }
+        }
+    });
+
+    test('should handle OpenAPI 3.1 specific features', async () => {
+        const outputFilePath = path.join('postman-collection-3.1_with_validation.json');
+        
+        // Clean up before test
+        if (fs.existsSync(outputFilePath)) {
+            fs.unlinkSync(outputFilePath);
+        }
+
+        try {
+            const result = await validateCollection(collection31Path, spec31Path, options);
+            
+            const generatedCollection = JSON.parse(fs.readFileSync(outputFilePath, 'utf8'));
+            
+            // Find a test script that includes the schema
+            const testItem = generatedCollection.item.find(item => 
+                item.event && item.event.some(event => 
+                    event.listen === 'test' && 
+                    event.script.exec.some(line => line.includes('const schema ='))
+                )
+            );
+            
+            expect(testItem).toBeDefined();
+            
+            // Extract the schema from the test script
+            const testEvent = testItem.event.find(event => event.listen === 'test');
+            const schemaLine = testEvent.script.exec.find(line => line.includes('const schema ='));
+            
+            // The schema should be valid JSON
+            const schemaMatch = schemaLine.match(/const schema = (.*);$/);
+            expect(schemaMatch).toBeTruthy();
+            
+            const schema = JSON.parse(schemaMatch[1]);
+            expect(schema).toBeDefined();
+            expect(typeof schema).toBe('object');
+
+        } finally {
+            if (fs.existsSync(outputFilePath)) {
+                fs.unlinkSync(outputFilePath);
+            }
+        }
     });
 });

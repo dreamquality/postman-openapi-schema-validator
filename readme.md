@@ -10,7 +10,7 @@ This project provides a Node.js utility for automating the validation of Postman
 
 ## Features
 
-- **Supports OpenAPI versions:** 2.0, 3.0.0, 3.0.1, and higher.
+- **Supports OpenAPI versions:** 2.0, 3.0.x, and 3.1.
 - **Automates schema validation:** Adds schema validation scripts to Postman requests.
 - **Debugging:** Logs validation results in the console.
 - **Improved Postman collections:** Generates new Postman collections with added schema validation for 20X status codes.
@@ -110,7 +110,7 @@ validateCollection(collectionPath, specPath, options)
 The utility logs detailed results to the console. Here's an example output showing validation summaries:
 
 ```plaintext
-OpenAPI version detected: 3.0.1
+OpenAPI version detected: 3.1.0
 ✓ Schema validation test added for POST /pet
 ✗ Schema not found for GET /unknown
 ✓ Schema validation test added for DELETE /user/{id}
@@ -159,6 +159,43 @@ OpenAPI version detected: 3.0.1
 
 - [GitHub Repository](https://github.com/dreamquality/postman-openapi-schema-validator)
 - [npm Package](https://www.npmjs.com/package/postman-openapi-schema-validator)
+
+---
+
+## Release Process
+
+This repository includes an automated release workflow that can be manually triggered to publish new versions to NPM.
+
+### For Maintainers
+
+To create a new release:
+
+1. **Go to GitHub Actions** in the repository
+2. **Select the "Release to NPM" workflow**
+3. **Click "Run workflow"** and choose:
+   - **Version bump type**: `patch` (1.1.1 → 1.1.2), `minor` (1.1.1 → 1.2.0), or `major` (1.1.1 → 2.0.0)
+   - **Dry run**: Check this to preview changes without actually publishing
+
+### What the workflow does:
+
+1. ✅ **Runs all tests** to ensure quality
+2. 🔢 **Bumps the version** in `package.json`
+3. 📝 **Generates a changelog** with recent commits
+4. 🏷️ **Creates a Git tag** for the release
+5. 📦 **Publishes to NPM** with the new version
+6. 🚀 **Creates a GitHub release** with release notes
+
+### Requirements:
+
+- `NPM_TOKEN` secret must be configured in the repository settings
+- Only maintainers with appropriate permissions can trigger releases
+
+### Dry Run Mode:
+
+Use dry run mode to preview what would happen without making actual changes:
+- Shows what the new version number would be
+- Generates changelog preview
+- No actual publishing or tagging occurs
 
 ---
 
